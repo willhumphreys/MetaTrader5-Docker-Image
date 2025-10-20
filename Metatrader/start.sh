@@ -89,6 +89,10 @@ fi
 # Upgrade pip and install required packages
 show_message "[6/7] Installing Python libraries"
 $wine_executable python -m pip install --upgrade --no-cache-dir pip
+# Install RPyC with specific version in Windows (for compatibility)
+show_message "[6/7] Installing RPyC 5.3.1 in Windows for compatibility"
+$wine_executable python -m pip install --no-cache-dir rpyc==5.3.1
+
 # Install MetaTrader5 library in Windows if not installed
 show_message "[6/7] Installing MetaTrader5 library in Windows"
 if ! is_wine_python_package_installed "MetaTrader5==$metatrader_version"; then
@@ -99,6 +103,10 @@ show_message "[6/7] Checking and installing mt5linux library in Windows if neces
 if ! is_wine_python_package_installed "mt5linux"; then
     $wine_executable python -m pip install --no-cache-dir mt5linux
 fi
+
+# Install RPyC with specific version in Linux (for compatibility)
+show_message "[6/7] Installing RPyC 5.3.1 in Linux for compatibility"
+pip install --no-cache-dir rpyc==5.3.1
 
 # Install mt5linux library in Linux if not installed
 show_message "[6/7] Checking and installing mt5linux library in Linux if necessary"

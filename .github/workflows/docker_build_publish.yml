@@ -3,22 +3,32 @@ name: Build and Publish Docker Image
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Docker image tag'
+        required: true
+        default: 'latest'
 
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to Docker Hub
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       # - name: Cache Docker layers
       #   uses: actions/cache@v3
@@ -30,19 +40,25 @@ jobs:
 
       - name: Set the version
         id: get_version
-        run: echo "VERSION=$(echo ${{ github.ref }} | cut -d '/' -f 3)" >> $GITHUB_ENV
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            echo "VERSION=$(echo ${{ github.ref }} | cut -d '/' -f 3)" >> $GITHUB_ENV
+          else
+            echo "VERSION=${{ github.event.inputs.tag }}" >> $GITHUB_ENV
+          fi
 
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v5
         with:
-          # context: .
-          # file: ./Dockerfile
+          context: .
+          file: ./Dockerfile
           platforms: linux/amd64
           push: true
-          tags:  gmag11/metatrader5_vnc:${{ env.VERSION }},gmag11/metatrader5_vnc:latest
-          # cache-from: type=local,src=/tmp/.buildx-cache
-          # cache-to: type=local,dest=/tmp/.buildx-cache
+          tags: ghcr.io/${{ github.repository_owner }}/metatrader5-vnc:${{ env.VERSION }},ghcr.io/${{ github.repository_owner }}/metatrader5-vnc:latest
+          build-args: |
+            VERSION=${{ env.VERSION }}
+            BUILD_DATE=${{ github.event.release.created_at }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}

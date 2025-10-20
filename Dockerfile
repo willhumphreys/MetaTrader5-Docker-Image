@@ -1,4 +1,4 @@
-FROM ghcr.io/linuxserver/baseimage-kasmvnc:debianbullseye
+FROM ghcr.io/linuxserver/baseimage-kasmvnc:debianbookworm
 
 # set version label
 ARG BUILD_DATE
@@ -16,13 +16,11 @@ RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y \
     python3-pip \
     wget \
-    && pip3 install --upgrade pip
+    && pip3 install --upgrade pip --break-system-packages
 
 # Add WineHQ repository key and APT source
-RUN wget -q https://dl.winehq.org/wine-builds/winehq.key \
-    && apt-key add winehq.key \
-    && add-apt-repository 'deb https://dl.winehq.org/wine-builds/debian/ bullseye main' \
-    && rm winehq.key
+RUN wget -qO- https://dl.winehq.org/wine-builds/winehq.key | apt-key add - \
+    && echo 'deb https://dl.winehq.org/wine-builds/debian/ bookworm main' > /etc/apt/sources.list.d/winehq.list
 
 # Add i386 architecture and update package lists
 RUN dpkg --add-architecture i386 \
