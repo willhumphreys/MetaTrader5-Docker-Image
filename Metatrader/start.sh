@@ -89,9 +89,6 @@ fi
 # Upgrade pip and install required packages
 show_message "[6/7] Installing Python libraries"
 $wine_executable python -m pip install --upgrade --no-cache-dir pip
-# Install RPyC with specific version in Windows (for compatibility)
-show_message "[6/7] Installing RPyC 5.3.1 in Windows for compatibility"
-$wine_executable python -m pip install --no-cache-dir rpyc==5.3.1
 
 # Install MetaTrader5 library in Windows if not installed
 show_message "[6/7] Installing MetaTrader5 library in Windows"
@@ -104,9 +101,13 @@ if ! is_wine_python_package_installed "mt5linux"; then
     $wine_executable python -m pip install --no-cache-dir mt5linux
 fi
 
+# Install RPyC 6.0.2 AFTER mt5linux to overwrite the rpyc-5.0.1 that mt5linux brings
+show_message "[6/7] Installing RPyC 6.0.2 in Windows (overwriting mt5linux's rpyc-5.0.1)"
+$wine_executable python -m pip install --no-cache-dir --force-reinstall rpyc==6.0.2
+
 # Install RPyC with specific version in Linux (for compatibility)
-show_message "[6/7] Installing RPyC 5.3.1 in Linux for compatibility"
-python3 -m pip install --no-cache-dir --break-system-packages rpyc==5.3.1
+show_message "[6/7] Installing RPyC 6.0.2 in Linux for compatibility"
+python3 -m pip install --no-cache-dir --break-system-packages rpyc==6.0.2
 
 # Install pyxdg library in Linux if not installed
 show_message "[6/7] Checking and installing pyxdg library in Linux if necessary"
