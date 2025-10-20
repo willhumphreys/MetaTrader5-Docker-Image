@@ -106,18 +106,18 @@ fi
 
 # Install RPyC with specific version in Linux (for compatibility)
 show_message "[6/7] Installing RPyC 5.3.1 in Linux for compatibility"
-pip install --no-cache-dir rpyc==5.3.1
+python3 -m pip install --no-cache-dir --break-system-packages rpyc==5.3.1
 
 # Install mt5linux library in Linux if not installed
 show_message "[6/7] Checking and installing mt5linux library in Linux if necessary"
 if ! is_python_package_installed "mt5linux"; then
-    pip install --upgrade --no-cache-dir mt5linux
+    python3 -m pip install --upgrade --no-cache-dir --break-system-packages mt5linux
 fi
 
 # Install pyxdg library in Linux if not installed
 show_message "[6/7] Checking and installing pyxdg library in Linux if necessary"
 if ! is_python_package_installed "pyxdg"; then
-    pip install --upgrade --no-cache-dir pyxdg
+    python3 -m pip install --upgrade --no-cache-dir --break-system-packages pyxdg
 fi
 
 # Start the MT5 server on Linux
