@@ -3,6 +3,8 @@ services:
     build: .
     image: gmag11/metatrader5_vnc
     container_name: mt5
+    security_opt:
+      - label=disable
     volumes:
       - ./config:/config
     ports:

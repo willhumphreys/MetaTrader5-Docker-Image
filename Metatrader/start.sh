@@ -118,10 +118,11 @@ fi
 show_message "[6/7] Installing numpy and pandas for mt5linux"
 python3 -m pip install --no-cache-dir --break-system-packages numpy pandas
 
-# Copy mt5linux from user install to system Python (workaround for broken setup.py)
-show_message "[6/7] Setting up mt5linux library for system Python"
-if [ -d "/config/.local/lib/python3.9/site-packages/mt5linux" ]; then
-    cp -r /config/.local/lib/python3.9/site-packages/mt5linux /usr/local/lib/python3.11/dist-packages/ 2>/dev/null || true
+# Copy mt5linux from Wine Python to Linux Python (workaround for broken setup.py)
+show_message "[6/7] Setting up mt5linux library for Linux Python"
+if [ -d "/config/.wine/drive_c/Program Files (x86)/Python39-32/Lib/site-packages/mt5linux" ]; then
+    mkdir -p /config/.local/lib/python3.11/site-packages/
+    cp -r "/config/.wine/drive_c/Program Files (x86)/Python39-32/Lib/site-packages/mt5linux" /config/.local/lib/python3.11/site-packages/ 2>/dev/null || true
 fi
 
 # Start the MT5 server on Linux
